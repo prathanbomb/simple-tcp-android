@@ -1,7 +1,6 @@
 package com.akexorcist.simpletcplibrary;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -11,9 +10,11 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.akexorcist.simpletcp.SimpleTcpClient;
-import com.akexorcist.simpletcp.SimpleTcpServer;
-import com.akexorcist.simpletcp.TcpUtils;
+import androidx.appcompat.app.AppCompatActivity;
+
+import th.co.digio.simpletcp.SimpleTcpClient;
+import th.co.digio.simpletcp.SimpleTcpServer;
+import th.co.digio.simpletcp.TcpUtils;
 
 public class SimpleTcp3ClientActivity extends AppCompatActivity {
     public static final int TCP_PORT = 21111;

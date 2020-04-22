@@ -1,14 +1,15 @@
 package com.akexorcist.simpletcplibrary;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.akexorcist.simpletcp.ContinuousTcpClient;
-import com.akexorcist.simpletcp.TcpUtils;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.net.Socket;
+
+import th.co.digio.simpletcp.ContinuousTcpClient;
+import th.co.digio.simpletcp.TcpUtils;
 
 public class ContinuousTcp2ServerActivity extends AppCompatActivity {
     public static final int TCP_PORT = 2000;

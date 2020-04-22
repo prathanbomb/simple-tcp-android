@@ -1,7 +1,6 @@
 package com.akexorcist.simpletcplibrary;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -9,11 +8,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.akexorcist.simpletcp.SimpleTcpClient;
-import com.akexorcist.simpletcp.SimpleTcpServer;
-import com.akexorcist.simpletcp.TcpUtils;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
+
+import th.co.digio.simpletcp.SimpleTcpClient;
+import th.co.digio.simpletcp.SimpleTcpServer;
+import th.co.digio.simpletcp.TcpUtils;
 
 public class SimpleTcp2Activity extends AppCompatActivity {
     public static final int TCP_PORT = 21111;

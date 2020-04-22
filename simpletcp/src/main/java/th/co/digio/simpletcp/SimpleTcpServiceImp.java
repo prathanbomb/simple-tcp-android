@@ -1,4 +1,4 @@
-package com.akexorcist.simpletcp;
+package th.co.digio.simpletcp;
 
 import java.net.InetAddress;
 

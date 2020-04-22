@@ -1,4 +1,4 @@
-package com.akexorcist.simpletcp;
+package th.co.digio.simpletcp;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;

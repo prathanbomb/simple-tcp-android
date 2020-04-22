@@ -1,14 +1,13 @@
-package com.akexorcist.simpletcp;
+package th.co.digio.simpletcp;
 
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -16,9 +15,8 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 
 /**
- * Created by Akexorcist on 10/1/2018 AD.
+ * @author supitsara
  */
-
 public class SimpleTcpServer implements SimpleTcpServiceImp {
     private static final String TAG = SimpleTcpServer.class.getSimpleName();
 
@@ -62,8 +60,8 @@ public class SimpleTcpServer implements SimpleTcpServiceImp {
         return inetAddress;
     }
 
-    public void onMessageIncoming(String message, String ip) {
-        dataReceivedListener.onDataReceived(message, ip);
+    public void onMessageIncoming(byte[] data, String ip) {
+        dataReceivedListener.onDataReceived(data, ip);
     }
 
     @Override
@@ -91,6 +89,14 @@ public class SimpleTcpServer implements SimpleTcpServiceImp {
         this.inetAddress = inetAddress;
     }
 
+    public void setOnDataReceivedListener(OnDataReceivedListener listener) {
+        this.dataReceivedListener = listener;
+    }
+
+    public interface OnDataReceivedListener {
+        void onDataReceived(byte[] data, String ip);
+    }
+
     private static class TcpService extends AsyncTask<Void, Void, Void> {
         private ServerSocket serverSocket;
         private SimpleTcpServiceImp simpleTcpServiceImp;
@@ -107,6 +113,7 @@ public class SimpleTcpServer implements SimpleTcpServiceImp {
             taskState = false;
         }
 
+        @Override
         protected Void doInBackground(Void... params) {
             Socket socket = null;
             while (taskState) {
@@ -123,23 +130,22 @@ public class SimpleTcpServer implements SimpleTcpServiceImp {
                 while (taskState && simpleTcpServiceImp.isConnected() && socket != null) {
                     try {
                         socket.setSoTimeout(1000);
-                        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-                        final String incomingMsg = in.readLine();
-
-                        if (simpleTcpServiceImp.getDataReceivedListener() != null && incomingMsg.length() > 0) {
+                        InputStream inputStream = socket.getInputStream();
+                        final byte[] recv = TcpUtils.readBytes(inputStream);
+                        if (simpleTcpServiceImp.getDataReceivedListener() != null && recv.length > 0) {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
                                 public void run() {
-                                    simpleTcpServiceImp.getDataReceivedListener().onDataReceived(incomingMsg, simpleTcpServiceImp.getInetAddress().getHostAddress());
+                                    simpleTcpServiceImp.getDataReceivedListener().onDataReceived(recv, simpleTcpServiceImp.getInetAddress().getHostAddress());
                                 }
                             });
+                        } else {
+                            break;
                         }
-
                         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                         String outgoingMsg = "%OK%" + System.getProperty("line.separator");
                         out.write(outgoingMsg);
                         out.flush();
-
                     } catch (NullPointerException e) {
                         simpleTcpServiceImp.setConnected(false);
                     } catch (SocketTimeoutException e) {
@@ -149,21 +155,14 @@ public class SimpleTcpServer implements SimpleTcpServiceImp {
                     }
                 }
                 try {
-                    if (serverSocket != null)
+                    if (serverSocket != null) {
                         serverSocket.close();
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             return null;
         }
-    }
-
-    public void setOnDataReceivedListener(OnDataReceivedListener listener) {
-        this.dataReceivedListener = listener;
-    }
-
-    public interface OnDataReceivedListener {
-        void onDataReceived(String message, String ip);
     }
 }
